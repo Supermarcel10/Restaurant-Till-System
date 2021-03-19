@@ -26,4 +26,16 @@ def declarations():
              "Fizzy orange": 0.9
              }
 
-    return pizza_types, pizza_bases, pizza_toppings, drink
+    configs = {}
+    with open("config/UserDefinedConfig.config", "r+") as config_file: #Todo: Fix
+        lines_config_file = config_file.readlines()
+        i = len(lines_config_file)
+        while 0 < i:
+            [config_name, config_option] = lines_config_file[i - 1].split(" = ")
+            if config_option.endswith("\n"):
+                [config_option, _] = config_option.split("\n")
+                del _
+            configs[config_name] = config_option
+            i -= 1
+
+    return configs, pizza_types, pizza_bases, pizza_toppings, drink

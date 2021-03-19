@@ -1,7 +1,7 @@
 import tkinter as tk
 import config.declarations
 
-pizza_types, pizza_bases, pizza_toppings, drink = config.declarations.declarations()
+configs, pizza_types, pizza_bases, pizza_toppings, drink = config.declarations.declarations()
 additional_requests, total = "", 0
 
 
@@ -36,14 +36,15 @@ class Application(tk.Frame):
         self.master.resizable(False, False)
         self.master.geometry("800x500")
 
-        self.master.rowconfigure(9)
-        self.master.columnconfigure(9)
-
     def create_widgets(self):
-        self.add = tk.Button(self,text="+", command=lambda: self.add())
+        self.back = tk.Frame(self)
+        self.back.grid(columnspan=5, rowspan=5)
+        self.back.rowconfigure(9)
+        self.back.columnconfigure(9)
+        self.add = tk.Button(self.back,text="+", command=lambda: self.add())
         self.add.grid(column=1, row=1)
 
-        self.quit = tk.Button(self, text="Exit", fg="red", command=self.master.destroy)
+        self.quit = tk.Button(self.back, text="Exit", fg="red", command=self.master.destroy)
         self.quit.grid(column=2, row=2)
 
     def add(self):
