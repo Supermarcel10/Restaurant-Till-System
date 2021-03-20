@@ -1,6 +1,5 @@
 from tkinter import *
 import config.declarations as declarations
-from os import path
 
 configs, pizza, drink = declarations.declarations()
 additional_requests, total = "", 0
