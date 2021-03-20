@@ -32,7 +32,7 @@ def declarations():
     if not config_path.exists():
         print("Creating config file!")
         open(config_path, "a")
-        #todo: creation of values
+        #TODO: Creation of values
 
     with open(config_path, "r+") as config_file:
         lines_config_file = config_file.readlines()

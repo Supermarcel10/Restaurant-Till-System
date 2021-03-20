@@ -1,7 +1,8 @@
 from tkinter import *
-import config.declarations
+import config.declarations as declarations
+from os import path
 
-configs, pizza, drink = config.declarations.declarations()
+configs, pizza, drink = declarations.declarations()
 additional_requests, total = "", 0
 
 
@@ -40,7 +41,9 @@ class Order_Add(Frame):
                          "y": int(root.winfo_screenheight() / 2 - self.height / 2)}
         self.master.geometry("+{}+{}".format(self.position["x"], self.position["y"]))
 
-        # todo: make an icon
+        # directory = path.dirname(__file__)
+        # self.master.tk.call('wm', 'iconphoto', root._w, PhotoImage(file=path.relpath("..\\icon.ico", directory)))
+        #TODO: Fix icon
 
     def settings(self):
         self.height = 200
@@ -57,10 +60,12 @@ class Order_Add(Frame):
         # self.test.grid(column=2, row=1)
         # TODO: For loop for every single option for every single type.
         # TODO: Custom grid calculations.
-        self.ribbon = Frame(self.back, bg=Colour("light_black"), height=100, width=self.width)
-        self.ribbon.pack(side=BOTTOM) #TODO: Consider changing to grid.
+        self.ribbon = Frame(self.back, bg=Colour("light_black"))
+        self.ribbon.pack(side=BOTTOM, fill=X) #TODO: Consider changing to grid.
 
-        self.cancel = Button(self.ribbon, text="Cancel", fg=Colour("white"), bg=Colour("red"), font=Font("default"), command=self.master.destroy)
+        #TODO: Custom grid
+
+        self.cancel = Button(self.ribbon, text="Cancel", fg=Colour("white"), bg=Colour("red"), font=Font("default"), command= self.master.destroy)
         self.cancel.grid(column=2, row=2)
 
         self.accept = Button(self.ribbon, text="Continue", fg=Colour("white"), bg=Colour("green"), font=Font("default"), command=lambda: self.adding())
@@ -68,6 +73,7 @@ class Order_Add(Frame):
 
     def adding(self):
         print("Adding")
+
         #TODO: Make checks
 
 
@@ -89,7 +95,7 @@ class Application(Frame):
                          "y": int(root.winfo_screenheight() / 2 - self.height / 2)}
         self.master.geometry("+{}+{}".format(self.position["x"], self.position["y"]))
 
-        #todo: make an icon
+        self.master.tk.call('wm', 'iconphoto', root._w, PhotoImage(file="icon.ico"))
 
     def settings(self):
         self.height = 400
