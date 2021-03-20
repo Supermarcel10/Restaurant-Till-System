@@ -14,8 +14,20 @@ class Pizza(tk.Frame):
         self.create_widgets()
 
     def set_properties(self):
+        self.settings()
+
         self.master.resizable(False, False)
-        self.master.geometry("600x400")
+        self.master.geometry(str(self.Width) + "x" + str(self.Height))
+
+        self.positionRight = int(root.winfo_screenwidth() / 2 - self.Width / 2)
+        self.positionDown = int(root.winfo_screenheight() / 2 - self.Height / 2)
+        self.master.geometry("+{}+{}".format(self.positionRight, self.positionDown))
+
+        # todo: make an icon
+
+    def settings(self):
+        self.Height = 200
+        self.Width = 200
 
     def create_widgets(self):
         self.button = tk.Button(self, text="Add", command=lambda: self.adding())
@@ -33,23 +45,34 @@ class Application(tk.Frame):
         self.create_widgets()
 
     def set_properties(self):
+        self.settings()
+
         self.master.resizable(False, False)
-        self.master.geometry("800x500")
+        self.master.geometry(str(self.Width)+"x"+str(self.Height))
+
+        self.positionRight = int(root.winfo_screenwidth() / 2 - self.Width / 2)
+        self.positionDown = int(root.winfo_screenheight() / 2 - self.Height / 2)
+        self.master.geometry("+{}+{}".format(self.positionRight, self.positionDown))
+
+        #todo: make an icon
+
+    def settings(self):
+        self.Height = 400
+        self.Width = 600
 
     def create_widgets(self):
         self.back = tk.Frame(self)
         self.back.grid(columnspan=5, rowspan=5)
         self.back.rowconfigure(9)
         self.back.columnconfigure(9)
-        self.add = tk.Button(self.back,text="+", command=lambda: self.add())
-        self.add.grid(column=1, row=1)
 
-        self.quit = tk.Button(self.back, text="Exit", fg="red", command=self.master.destroy)
-        self.quit.grid(column=2, row=2)
+        self.add = tk.Button(self.back,text="+", command=lambda: self.add_pizza()).grid(column=1, row=1)
 
-    def add(self):
-        print("hi there, everyone!")
+        self.quit = tk.Button(self.back, text="Exit", fg="red", command=self.master.destroy).grid(column=2, row=2)
 
+    def add_pizza(self):
+        pizza = tk.Tk()
+        Pizza(pizza)
 
 root = tk.Tk()
 app = Application(master=root)

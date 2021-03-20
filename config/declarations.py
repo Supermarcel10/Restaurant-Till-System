@@ -30,18 +30,33 @@ def declarations():
     config_path = Path("config/UserDefinedConfig.config")
 
     if not config_path.exists():
-        print("creating file")
+        print("Creating config file!")
         open(config_path, "a")
 
     with open(config_path, "r+") as config_file:
         lines_config_file = config_file.readlines()
-        i = len(lines_config_file)
-        while 0 < i:
-            [config_name, config_option] = lines_config_file[i - 1].split(" = ")
-            if config_option.endswith("\n"):
-                [config_option, _] = config_option.split("\n")
-                del _
-            configs[config_name] = config_option
-            i -= 1
+        for i in range(len(lines_config_file)):
+            if "}" in lines_config_file[i]:
+                in_category = False
+                configs[category_name] = category
+                i += 1
+            elif "{" in lines_config_file[i]:
+                in_category = True
+                category= {}
+                category_name, _ = lines_config_file[i].split(" {")
+            else:
+                if lines_config_file[i].strip():
+                    [config_name, config_option] = lines_config_file[i].split(" = ")
+                    if config_option.endswith("\n"):
+                        [config_option, _] = config_option.split("\n")
+                        del _
+                    try:
+                        if in_category:
+                            category[config_name] = config_option
+                        else:
+                            configs[config_name] = config_option
+                    except:
+                        configs[config_name] = config_option
+                i += 1
 
     return configs, pizza_types, pizza_bases, pizza_toppings, drink
