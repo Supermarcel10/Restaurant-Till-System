@@ -1,6 +1,36 @@
 from pathlib import Path
 from typing import Dict
 
+def default_configs(f):
+    f.write(
+"""
+FONTS {
+DEFAULT = MONOCHROME
+
+WARNING = MONOCHROME
+ERROR = MONOCHROME
+}
+
+COLOURS {
+WHITE = #FFFFFF
+
+BLACK = #000000
+LIGHT_BLACK = #202225
+
+LIGHT_GREY = #99AAB5
+GREY = #36393F
+DARK_GREY = #2F3136
+
+GREEN = #43B581
+RED = #F04747
+ORANGE = #F57731
+
+WARNING = #FAA61A
+ERROR = #F04747
+})
+""")
+    f.close()
+
 
 def declarations():
     pizza_types: Dict[str, float] = {"name": "pizza_types",
@@ -36,8 +66,9 @@ def declarations():
 
     if not config_path.exists():
         print("Creating config file!")
-        open(config_path, "a")
-        # TODO: Creation of values
+        file = open(config_path, "a")
+
+        default_configs(file)
 
     with open(config_path, "r+") as config_file:
         lines_config_file = config_file.readlines()
