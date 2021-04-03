@@ -1,9 +1,10 @@
-from tkinter import *
-import config.declarations as declarations
+from config.declarations import declarations as declarations
+import order_add as order_add
 from tkinter import messagebox
+from tkinter import *
 
-configs, pizza, drink = declarations.declarations()
-additional_requests, total = "", 0
+configs, pizza, drink = declarations()
+additional_requests = ""
 
 
 def Colour(col):
@@ -20,13 +21,6 @@ def Font(font):
     except KeyError as e:
         print("ValueError: Non existent " + str(e) + " attempted.\nContinuing with a 'MONOCHROME' alternative!\n")
         return "MONOCHROME"
-
-
-def get_list(dictionary):
-    keys = []
-    for key in dictionary.keys():
-        keys.append(key)
-    return keys
 
 
 # def popup(master=None, action=None):
@@ -81,188 +75,7 @@ def get_list(dictionary):
 #         return inf
 
 
-class Order_Add(object):
-    def __init__(self, parent, additional_type):
-        self.master = Toplevel(parent)
-        self.type = additional_type
-        self.master.after(1, lambda: self.master.focus_force())
 
-        self.set_properties()
-        self.create_widgets()
-
-        # label = Label(self.master, text="Pick something:")
-        # label.pack(side="top", fill="x")
-        #
-        # self.var = StringVar()
-        # om = OptionMenu(self.master, self.var, "one", "two", "three")
-        # om.pack(side="top", fill="x")
-        #
-        # button = Button(self.master, text="OK", command=self.master.destroy)
-        # button.pack()
-
-    def set_properties(self):
-        self.settings()
-
-        self.master.resizable(False, False)
-        self.master.geometry(str(self.width) + "x" + str(self.height))
-
-        self.position = {"x": int(root.winfo_screenwidth() / 2 - self.width / 2),
-                         "y": int(root.winfo_screenheight() / 2 - self.height / 2)}
-        self.master.geometry("+{}+{}".format(self.position["x"], self.position["y"]))
-
-        self.oms, self.vars, self.names = [], [], []
-
-        # directory = path.dirname(__file__)
-        # self.master.tk.call('wm', 'iconphoto', root._w, PhotoImage(file=path.relpath("..\\icon.ico", directory)))
-        # TODO: Fix icon
-
-    def settings(self):
-        self.height = 400
-        self.width = 400
-
-    def create_widgets(self):
-        self.back = Frame(self.master, bg=Colour("dark_grey"))
-        self.back.pack_propagate(0)
-        self.back.pack(fill=BOTH, expand=1)
-
-        self.resolution = (self.width, self.height)
-
-        self.front = Frame(self.back, bg=Colour("grey"), height=self.height, width=self.width)
-        self.front_resolution = (self.width, self.height * 11 / 12)
-        self.front.place(x=self.resolution[0] / 2, y=self.front_resolution[1], anchor="s", width=self.front_resolution[0], height=self.front_resolution[1])
-
-        if self.type.lower() == "drink":
-            self.rows = 7
-            self.main = "drink"
-
-            self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Drink:")
-            self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] * 0 / self.rows, width=self.front_resolution[0] * 3 / 4, height=self.front_resolution[1] / self.rows)
-
-            self.var = StringVar(self.front)
-            self.var.set("")
-
-            self.keys = get_list(drink)
-            try:
-                self.name = drink["name"]
-                if "_" in self.name:
-                    print("_ in name")
-                    self.name = self.name.replace("_", " ")
-                if self.name.endswith("s"):
-                    self.name = self.name[:-1]
-                self.names.append(self.name)
-                self.name = self.name.title() + ":"
-
-                self.visible_keys = self.keys.copy()
-                self.visible_keys.pop(0)
-            except KeyError:
-                raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
-
-            self.om = OptionMenu(self.front, self.var, *self.visible_keys)
-            self.om.place(x=self.front_resolution[0] * 1 / 4, y=self.front_resolution[1] * 1 / self.rows, width=self.front_resolution[0] * 1 / 2, height=self.front_resolution[1] / self.rows)
-            self.om.config(bg=Colour("light_black"), fg=Colour("white"), border=0)
-            self.om["menu"].config(bg=Colour("light_grey"), fg=Colour("black"))
-
-            self.oms.append(self.om)
-            self.vars.append(self.var)
-
-            self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Additional Information:")
-            self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] * 3 / self.rows, width=self.front_resolution[0] * 3 / 4, height=self.front_resolution[1] / self.rows)
-
-            self.ent = Entry(self.front, bg=Colour("light_black"), fg=Colour("white"))
-            self.ent.place(x=self.front_resolution[0] * 1 / 4, y=self.front_resolution[1] * 4 / self.rows, width=self.front_resolution[0] * 1 / 2, height=self.front_resolution[1] / self.rows)
-
-            self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
-            self.info.place(x=0, y=self.front_resolution[1] * 6 / self.rows, width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
-
-        elif self.type.lower() == "pizza":
-            self.rows = (len(pizza) * 3) + 1
-            self.main = "pizza base"
-
-            for self.i in range(len(pizza)):
-                self.keys = get_list(pizza[self.i])
-                self.values = []
-                for self.e in range(len(self.keys)):
-                    self.values.append(pizza[self.i].get(self.keys[self.e]))
-                try:
-                    self.name = pizza[self.i]["name"]
-                    if "_" in self.name:
-                        self.name = self.name.replace("_", " ")
-                    if self.name.endswith("s"):
-                        self.name = self.name[:-1]
-                    self.names.append(self.name)
-                    self.name = self.name.title() + ":"
-
-                    self.visible_keys = self.keys.copy()
-                    self.visible_keys.pop(0)
-                except KeyError:
-                    raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
-
-                self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text=self.name)
-                self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] / self.rows * 2 * self.i, width=self.front_resolution[0] * 3 / 4, height=self.front_resolution[1] / self.rows)
-
-                self.var = StringVar(self.front)
-                self.var.set("")
-
-                self.om = OptionMenu(self.front, self.var, *self.visible_keys)
-                self.om.place(x=self.front_resolution[0] * 1 / 4, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 0.5), width=self.front_resolution[0] * 1 / 2, height=self.front_resolution[1] / self.rows)
-                self.om.config(bg=Colour("light_black"), fg=Colour("white"), border=0)
-                self.om["menu"].config(bg=Colour("light_grey"), fg=Colour("black"))
-
-                self.oms.append(self.om)
-                self.vars.append(self.var)
-
-            self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Additional Information:")
-            self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] / self.rows * 2 * (self.i + 1), width=self.front_resolution[0] * 3 / 4, height=self.front_resolution[1] / self.rows)
-
-            self.ent = Entry(self.front, bg=Colour("light_black"), fg=Colour("white"))
-            self.ent.place(x=self.front_resolution[0] * 1 / 4, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 1.5), width=self.front_resolution[0] * 1 / 2, height=self.front_resolution[1] / self.rows)
-
-            self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
-            self.info.place(x=0, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 2.5), width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
-
-        self.ribbon = Frame(self.back, bg=Colour("light_black"))
-        self.ribbon_resolution = (self.width, self.height / 12)
-        self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
-
-        self.cancel = Button(self.ribbon, text="Cancel", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: self.quitting())
-        self.cancel.place(x=self.ribbon_resolution[0] * 2 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
-
-        self.accept = Button(self.ribbon, text="Continue", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.adding())
-        self.accept.place(x=self.ribbon_resolution[0] * 7 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
-
-
-    def quitting(self):
-        self.clean_vars = []
-        self.names = []
-        self.main = ""
-        self.master.destroy()
-
-    def adding(self):
-        if len(self.vars) != len(self.oms):
-            raise ValueError("Fatal error occurred:\nNot enough parameters supplied!\nAborting!")
-
-        self.clean_vars = []
-        self.info.config(text="")
-
-        for self.x in range(len(self.oms)):
-            if self.vars[self.x].get() == "":
-                self.info.config(text="%s must be selected!" %self.names[self.x].title())
-                break
-            else:
-                self.clean_vars.append(self.vars[self.x].get())
-
-        if len(self.oms) == len(self.clean_vars):
-            if self.ent.get() != "":
-                self.clean_vars.append(self.ent.get())
-                self.names.append("additional")
-
-            self.master.destroy()
-
-    def show(self):
-        self.master.deiconify()
-        self.master.wait_window()
-        # TODO: Add price!
-        return self.main, self.clean_vars, self.names
 
 
 class Application(Frame):
@@ -271,6 +84,7 @@ class Application(Frame):
         self.master = master
         self.pack()
         self.set_properties()
+        self.defaults()
         self.create_widgets()
 
     def set_properties(self):
@@ -285,9 +99,14 @@ class Application(Frame):
 
         # self.master.tk.call('wm', 'iconphoto', root._w, PhotoImage(file="icon.ico")) #TODO: Fix icon
 
+    def defaults(self):
+        self.total_var = 0
+
     def settings(self):
         self.height = 400
         self.width = 600
+
+        self.max_order_size = 10
 
     def create_widgets(self):
         # Whole
@@ -328,7 +147,7 @@ class Application(Frame):
         self.total_lab = Label(self.b_panel, text="Total: ", bg=Colour("grey"), fg=Colour("white"), font=(Font("default"), 11), anchor=E)
         self.total_lab.place(x=self.b_panel_resolution[0] * 1 / 10, y=self.b_panel_resolution[1] * 17 / 20, width=self.b_panel_resolution[0] * 6 / 10, height=self.b_panel_resolution[1] * 2 / 20)
 
-        self.total_val = round(float(total), 2)
+        self.total_val = round(float(self.total_var), 2)
 
         self.total = Label(self.b_panel, text="£ %i" %self.total_val, bg=Colour("dark_grey"), fg=Colour("white"), font=(Font("default"), 12))
         self.total.place(x=self.b_panel_resolution[0] * 7 / 10, y=self.b_panel_resolution[1] * 17 / 20, width=self.b_panel_resolution[0] * 2 / 10, height=self.b_panel_resolution[1] * 2 / 20)
@@ -348,7 +167,9 @@ class Application(Frame):
         self.cont.place(x=self.ribbon_resolution[0] * 7 / 14, y=0, width=self.ribbon_resolution[0] * 6 / 14, height=self.ribbon_resolution[1])
 
     def update_total(self):
-        self.total.config(text="£ %i" %self.total_val)
+        self.total_var = "{:.2f}".format(round(self.total_var, 2))
+        self.total.config(text="£ %s" %self.total_var)
+        self.total_var = float(self.total_var)
 
     def ex(self):
         self.conf = messagebox.askquestion('Exit Application', 'Are you sure you want to exit the application?', icon='warning')
@@ -359,22 +180,35 @@ class Application(Frame):
         self.conf = messagebox.askquestion('Exit Application', 'Are you sure you want to reset the order?', icon='warning')
         if self.conf == 'yes':
             self.itemlist.delete(0, END)
+            self.costlist.delete(0, END)
+            self.defaults()
             self.update_total()
 
     def order_add(self, addition_type):
-        self.main, self.type_selection, self.type = Order_Add(self, additional_type=addition_type).show()
+        if self.itemlist.size() == self.max_order_size:
+            print("Max order size!") #TODO: Fix max order info!
+            return
+
+        self.main, self.price, self.type_selection, self.type = order_add.Order_Add(self, additional_type=addition_type).show()
         self.dict = {}
 
         for self.i in range(len(self.type)):
             self.dict[self.type[self.i]] = self.type_selection[self.i]
 
         if len(self.type_selection) == len(self.type) and self.type_selection:
-            print(self.type_selection)
-            print(self.type)
-            print(self.dict)
+            try:
+                self.itemlist.insert(END, addition_type + ": " + self.dict[self.main])
+            except KeyError:
+                raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
 
-            print(self.dict[self.main])
-            self.itemlist.insert(END, addition_type + ": " + self.dict[self.main])
+            try:
+                self.costlist.insert(END, " £ " + str("{:.2f}".format(self.price)))
+            except KeyError:
+                self.itemlist.delete(END)
+                raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
+
+            self.total_var += self.price
+            self.update_total()
 
 
 if __name__ == "__main__":

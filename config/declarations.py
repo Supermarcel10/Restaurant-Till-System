@@ -42,8 +42,8 @@ def declarations():
                                      }
 
     pizza_bases: Dict[str, float] = {"name": "pizza_bases",
-                                     "Traditional": 1,
-                                     "Thin and Crispy": 1
+                                     "Traditional": 0,
+                                     "Thin and Crispy": 0
                                      }
 
     pizza_toppings: Dict[str, float] = {"name": "pizza_toppings",
