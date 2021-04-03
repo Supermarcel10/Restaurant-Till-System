@@ -16,16 +16,6 @@ class Order_Add(object):
         self.set_properties()
         self.create_widgets()
 
-        # label = Label(self.master, text="Pick something:")
-        # label.pack(side="top", fill="x")
-        #
-        # self.var = StringVar()
-        # om = OptionMenu(self.master, self.var, "one", "two", "three")
-        # om.pack(side="top", fill="x")
-        #
-        # button = Button(self.master, text="OK", command=self.master.destroy)
-        # button.pack()
-
     def set_properties(self):
         self.settings()
 

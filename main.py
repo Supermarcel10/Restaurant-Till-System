@@ -1,6 +1,6 @@
 from config.declarations import declarations as declarations
 import order_add as order_add
-from tkinter import messagebox
+import popup as popup
 from tkinter import *
 
 configs, pizza, drink = declarations()
@@ -21,61 +21,6 @@ def Font(font):
     except KeyError as e:
         print("ValueError: Non existent " + str(e) + " attempted.\nContinuing with a 'MONOCHROME' alternative!\n")
         return "MONOCHROME"
-
-
-# def popup(master=None, action=None):
-#     # Initialise
-#     inf = None
-#     master.pack()
-#     master.after(1, lambda: master.focus_force())
-#
-#     def returning(info):
-#         global inf
-#         inf = info
-#
-#     # Settings
-#     height = 100
-#     width = 200
-#
-#     # Set Properties
-#     master.resizable(False, False)
-#     master.geometry(str(width) + "x" + str(height))
-#
-#     position = {"x": int(master.winfo_screenwidth() / 2 - width / 2),
-#                 "y": int(master.winfo_screenheight() / 2 - height / 2)}
-#     master.geometry("+{}+{}".format(position["x"], position["y"]))
-#
-#     # Create Widgets
-#     back = Frame(master, bg=Colour("grey"), height=height, width=width)
-#     back.pack_propagate(0)
-#     back.pack(fill=BOTH, expand=1)
-#
-#     resolution = (width, height)
-#
-#     front = Frame(back, bg=Colour("grey"), height=height, width=width)
-#     front_resolution = (width, height * 5 / 8)
-#     front.place(x=resolution[0] / 2, y=front_resolution[1], anchor="s", width=front_resolution[0],
-#                 height=front_resolution[1])
-#
-#     lab = Label(front, bg=Colour("grey"), fg=Colour("white"), text="Are you sure you want to %s?" % action)
-#     lab.place(x=0, y=0, height=front_resolution[1], width=width)
-#
-#     ribbon = Frame(back, bg=Colour("light_black"))
-#     ribbon_resolution = (width, height * 3 / 8)
-#     ribbon.place(x=resolution[0] / 2, y=resolution[1], anchor="s", width=width, height=ribbon_resolution[1])
-#
-#     no = Button(ribbon, text="No", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: returning(False))
-#     no.place(x=ribbon_resolution[0] * 1 / 8, y=0, width=ribbon_resolution[0] * 3 / 8, height=ribbon_resolution[1])
-#
-#     yes = Button(ribbon, text="Yes", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: returning(True))
-#     yes.place(x=ribbon_resolution[0] * 1 / 2, y=0, width=ribbon_resolution[0] * 3 / 8, height=ribbon_resolution[1])
-#
-#     if inf:
-#         print(inf)
-#         return inf
-
-
-
 
 
 class Application(Frame):
@@ -172,13 +117,13 @@ class Application(Frame):
         self.total_var = float(self.total_var)
 
     def ex(self):
-        self.conf = messagebox.askquestion('Exit Application', 'Are you sure you want to exit the application?', icon='warning')
-        if self.conf == 'yes':
+        self.conf = popup.ask(self, action="exit").show()
+        if self.conf:
             root.destroy()
 
     def res(self):
-        self.conf = messagebox.askquestion('Exit Application', 'Are you sure you want to reset the order?', icon='warning')
-        if self.conf == 'yes':
+        self.conf = popup.ask(self, action="reset order").show()
+        if self.conf:
             self.itemlist.delete(0, END)
             self.costlist.delete(0, END)
             self.defaults()
