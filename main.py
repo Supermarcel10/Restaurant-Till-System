@@ -81,16 +81,24 @@ def get_list(dictionary):
 #         return inf
 
 
-class Order_Add(Frame):
-    def __init__(self, additional_type=None, master=None):
-        super().__init__(master)
-        self.master = master
+class Order_Add(object):
+    def __init__(self, parent, additional_type):
+        self.master = Toplevel(parent)
         self.type = additional_type
-        self.pack()
         self.master.after(1, lambda: self.master.focus_force())
 
         self.set_properties()
         self.create_widgets()
+
+        # label = Label(self.master, text="Pick something:")
+        # label.pack(side="top", fill="x")
+        #
+        # self.var = StringVar()
+        # om = OptionMenu(self.master, self.var, "one", "two", "three")
+        # om.pack(side="top", fill="x")
+        #
+        # button = Button(self.master, text="OK", command=self.master.destroy)
+        # button.pack()
 
     def set_properties(self):
         self.settings()
@@ -113,7 +121,6 @@ class Order_Add(Frame):
         self.width = 400
 
     def create_widgets(self):
-        self.back = Frame(self, bg=Colour("grey"), height=self.height, width=self.width)
         self.back = Frame(self.master, bg=Colour("dark_grey"))
         self.back.pack_propagate(0)
         self.back.pack(fill=BOTH, expand=1)
@@ -125,8 +132,8 @@ class Order_Add(Frame):
         self.front.place(x=self.resolution[0] / 2, y=self.front_resolution[1], anchor="s", width=self.front_resolution[0], height=self.front_resolution[1])
 
         if self.type.lower() == "drink":
-
             self.rows = 7
+            self.main = "drink"
 
             self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Drink:")
             self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] * 0 / self.rows, width=self.front_resolution[0] * 3 / 4, height=self.front_resolution[1] / self.rows)
@@ -134,12 +141,27 @@ class Order_Add(Frame):
             self.var = StringVar(self.front)
             self.var.set("")
 
-            self.om = OptionMenu(self.front, self.var, *drink)
+            self.keys = get_list(drink)
+            try:
+                self.name = drink["name"]
+                if "_" in self.name:
+                    print("_ in name")
+                    self.name = self.name.replace("_", " ")
+                if self.name.endswith("s"):
+                    self.name = self.name[:-1]
+                self.names.append(self.name)
+                self.name = self.name.title() + ":"
+
+                self.visible_keys = self.keys.copy()
+                self.visible_keys.pop(0)
+            except KeyError:
+                raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
+
+            self.om = OptionMenu(self.front, self.var, *self.visible_keys)
             self.om.place(x=self.front_resolution[0] * 1 / 4, y=self.front_resolution[1] * 1 / self.rows, width=self.front_resolution[0] * 1 / 2, height=self.front_resolution[1] / self.rows)
             self.om.config(bg=Colour("light_black"), fg=Colour("white"), border=0)
             self.om["menu"].config(bg=Colour("light_grey"), fg=Colour("black"))
 
-            self.names.append("drink")
             self.oms.append(self.om)
             self.vars.append(self.var)
 
@@ -153,8 +175,9 @@ class Order_Add(Frame):
             self.info.place(x=0, y=self.front_resolution[1] * 6 / self.rows, width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
 
         elif self.type.lower() == "pizza":
-
             self.rows = (len(pizza) * 3) + 1
+            self.main = "pizza base"
+
             for self.i in range(len(pizza)):
                 self.keys = get_list(pizza[self.i])
                 self.values = []
@@ -196,18 +219,23 @@ class Order_Add(Frame):
 
             self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
             self.info.place(x=0, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 2.5), width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
-        else:
-            return
 
         self.ribbon = Frame(self.back, bg=Colour("light_black"))
         self.ribbon_resolution = (self.width, self.height / 12)
         self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
 
-        self.cancel = Button(self.ribbon, text="Cancel", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=self.master.destroy)
+        self.cancel = Button(self.ribbon, text="Cancel", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: self.quitting())
         self.cancel.place(x=self.ribbon_resolution[0] * 2 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
 
         self.accept = Button(self.ribbon, text="Continue", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.adding())
         self.accept.place(x=self.ribbon_resolution[0] * 7 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
+
+
+    def quitting(self):
+        self.clean_vars = []
+        self.names = []
+        self.main = ""
+        self.master.destroy()
 
     def adding(self):
         if len(self.vars) != len(self.oms):
@@ -228,7 +256,13 @@ class Order_Add(Frame):
                 self.clean_vars.append(self.ent.get())
                 self.names.append("additional")
 
-            print("Continue")
+            self.master.destroy()
+
+    def show(self):
+        self.master.deiconify()
+        self.master.wait_window()
+        # TODO: Add price!
+        return self.main, self.clean_vars, self.names
 
 
 class Application(Frame):
@@ -324,15 +358,26 @@ class Application(Frame):
     def res(self):
         self.conf = messagebox.askquestion('Exit Application', 'Are you sure you want to reset the order?', icon='warning')
         if self.conf == 'yes':
-            print("Add resetting info") # TODO: Resetting info
+            self.itemlist.delete(0, END)
+            self.update_total()
 
-    @staticmethod
-    def order_add(addition_type):
-        add_root = Tk()
-        Order_Add(master=add_root, additional_type=addition_type) # TODO: Add check to see if under 10 items
+    def order_add(self, addition_type):
+        self.main, self.type_selection, self.type = Order_Add(self, additional_type=addition_type).show()
+        self.dict = {}
 
-    # TODO: Add final screen
+        for self.i in range(len(self.type)):
+            self.dict[self.type[self.i]] = self.type_selection[self.i]
 
-root = Tk()
-app = Application(master=root)
-app.mainloop()
+        if len(self.type_selection) == len(self.type) and self.type_selection:
+            print(self.type_selection)
+            print(self.type)
+            print(self.dict)
+
+            print(self.dict[self.main])
+            self.itemlist.insert(END, addition_type + ": " + self.dict[self.main])
+
+
+if __name__ == "__main__":
+    root = Tk()
+    Application(master=root)
+    root.mainloop()
