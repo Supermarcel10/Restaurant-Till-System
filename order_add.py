@@ -168,7 +168,7 @@ class Order_Add(object):
                 self.price = 0
                 break
             else:
-                if self.type.lower() == "pizza":
+                if self.type.lower() == "pizza": # Todo: [BUG] Empty continuation button stops further continuation
                     for self.f in range(len(pizza)):
                         if pizza[self.f]["name"] == self.rawnames[self.x]:
                             self.price += pizza[self.f][self.vars[self.x].get()]
@@ -176,7 +176,9 @@ class Order_Add(object):
                 elif self.type.lower() == "drink":
                     self.price += drink[self.vars[self.x].get()]
                     self.clean_vars.append(self.vars[self.x].get())
-
+                # print(pizza[self.f][self.vars[self.x].get()])
+                print(self.vars[self.x].get())
+                print(pizza[self.f])
         if len(self.oms) == len(self.clean_vars):
             if self.ent.get() != "":
                 self.clean_vars.append(self.ent.get())

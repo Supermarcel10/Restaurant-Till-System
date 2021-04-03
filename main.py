@@ -108,13 +108,59 @@ class Application(Frame):
         self.reset = Button(self.ribbon, text="Reset", fg=Colour("white"), bg=Colour("orange"), font=(Font("default"), 18), command=lambda: self.res())
         self.reset.place(x=self.ribbon_resolution[0] * 4 / 14, y=0, width=self.ribbon_resolution[0] * 2 / 14, height=self.ribbon_resolution[1])
 
-        self.cont = Button(self.ribbon, text="Continue", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: print("Continue"))
+        self.cont = Button(self.ribbon, text="Continue", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.con())
         self.cont.place(x=self.ribbon_resolution[0] * 7 / 14, y=0, width=self.ribbon_resolution[0] * 6 / 14, height=self.ribbon_resolution[1])
 
     def update_total(self):
         self.total_var = "{:.2f}".format(round(self.total_var, 2))
         self.total.config(text="£ %s" %self.total_var)
         self.total_var = float(self.total_var)
+
+    def con(self):
+        # Top
+        self.a_panel.place_forget()
+        self.b_panel.place_forget()
+
+        self.c_panel = Frame(self.front, bg=Colour("grey"))
+        self.c_panel_resolution = (self.front_resolution[0], self.front_resolution[1])
+        self.c_panel.place(x=0, y=0, width=self.c_panel_resolution[0], height=self.c_panel_resolution[1])
+
+        self.final_label = Label(self.c_panel, text="The total for the order came to £%s" %"{:.2f}".format(round(self.total_var, 2)), bg=Colour("grey"), fg=Colour("white"), wraplength=self.c_panel_resolution[0] * 9 / 10, font=(Font("default"), 48))
+        self.final_label.place(x=0, y=0, width=self.c_panel_resolution[0], height=self.c_panel_resolution[1])
+
+        # Ribbon
+        self.ribbon.place_forget()
+
+        self.con_ribbon = Frame(self.back, bg=Colour("light_black"))
+        self.con_ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
+
+        self.backup = Button(self.con_ribbon, text="Back", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.order_handle())
+        self.backup.place(x=self.ribbon_resolution[0] * 5 / 100, y=0, width=self.ribbon_resolution[0] * 45 / 100, height=self.ribbon_resolution[1])
+
+        self.final = Button(self.con_ribbon, text="Confirm & New Order", fg=Colour("white"), bg=Colour("orange"), font=(Font("default"), 18), command=lambda: self.order_handle("new"))
+        self.final.place(x=self.ribbon_resolution[0] * 50 / 100, y=0, width=self.ribbon_resolution[0] * 45 / 100, height=self.ribbon_resolution[1])
+
+    def order_handle(self, type="back"):
+        # TODO: Saving to some sort of database here.
+        if type == "new":
+            # Confirmation
+            self.conf = popup.ask(self, action="make new order").show()
+
+            self.itemlist.delete(0, END)
+            self.costlist.delete(0, END)
+            self.defaults()
+            self.update_total()
+
+        # Top
+        self.c_panel.place_forget()
+        self.final_label.place_forget()
+
+        self.a_panel.place(x=0, y=0, width=self.b_panel_resolution[0], height=self.b_panel_resolution[1])
+        self.b_panel.place(x=self.a_panel_resolution[0], y=0, width=self.b_panel_resolution[0], height=self.b_panel_resolution[1])
+
+        # Ribbon
+        self.con_ribbon.place_forget()
+        self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
 
     def ex(self):
         self.conf = popup.ask(self, action="exit").show()
