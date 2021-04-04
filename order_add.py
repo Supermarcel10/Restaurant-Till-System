@@ -160,6 +160,9 @@ class Order_Add(object):
         if len(self.vars) != len(self.oms):
             raise ValueError("Fatal error occurred:\nNot enough parameters supplied!\nAborting!")
 
+        # for self.x in range(len(self.vars)):
+        #     print(str(self.x) + " " + self.vars[self.x].get())
+
         self.info.config(text="")
 
         for self.x in range(len(self.oms)):
@@ -168,7 +171,7 @@ class Order_Add(object):
                 self.price = 0
                 break
             else:
-                if self.type.lower() == "pizza": # Todo: [BUG] Empty continuation button stops further continuation
+                if self.type.lower() == "pizza": #Todo: [BUG] Empty continuation button stops further continuation
                     for self.f in range(len(pizza)):
                         if pizza[self.f]["name"] == self.rawnames[self.x]:
                             self.price += pizza[self.f][self.vars[self.x].get()]
@@ -177,8 +180,8 @@ class Order_Add(object):
                     self.price += drink[self.vars[self.x].get()]
                     self.clean_vars.append(self.vars[self.x].get())
                 # print(pizza[self.f][self.vars[self.x].get()])
-                print(self.vars[self.x].get())
-                print(pizza[self.f])
+                # print(self.vars[self.x].get())
+                # print(pizza[self.f])
         if len(self.oms) == len(self.clean_vars):
             if self.ent.get() != "":
                 self.clean_vars.append(self.ent.get())
