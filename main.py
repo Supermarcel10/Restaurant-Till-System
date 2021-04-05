@@ -23,6 +23,13 @@ def Font(font):
         return "MONOCHROME"
 
 
+def get_keys(dictionary):
+    keys = []
+    for key in dictionary.keys():
+        keys.append(key)
+    return keys
+
+
 class Application(Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -36,11 +43,13 @@ class Application(Frame):
         self.settings()
 
         self.master.resizable(False, False)
-        self.master.geometry(str(self.width)+"x"+str(self.height))
+        self.master.geometry(str(self.width) + "x" + str(self.height))
 
         self.position = {"x": int(root.winfo_screenwidth() / 2 - self.width / 2),
                          "y": int(root.winfo_screenheight() / 2 - self.height / 2)}
         self.master.geometry("+{}+{}".format(self.position["x"], self.position["y"]))
+
+        self.master.title(self.title)
 
         # self.master.tk.call('wm', 'iconphoto', root._w, PhotoImage(file="icon.ico")) #TODO: Fix icon
 
@@ -48,6 +57,8 @@ class Application(Frame):
         self.total_var = 0
 
     def settings(self):
+        self.title = "Pizza"
+
         self.height = 400
         self.width = 600
 
@@ -73,29 +84,38 @@ class Application(Frame):
         self.a_panel.place(x=0, y=0, width=self.a_panel_resolution[0], height=self.a_panel_resolution[1])
 
         self.add_pizza = Button(self.a_panel, text="Add pizza", font=(Font("default"), 18), command=lambda: self.order_add("Pizza"))
-        self.add_pizza.place(x=self.a_panel_resolution[0] * 1 / 8, y=self.a_panel_resolution[1] * 1 / 20, width=self.a_panel_resolution[0] * 3 / 4, height=self.a_panel_resolution[1] * 3 / 20)
+        self.add_pizza.place(x=self.a_panel_resolution[0] * 1 / 8, y=self.a_panel_resolution[1] * 1 / 20, width=self.a_panel_resolution[0] * 3 / 4,
+                             height=self.a_panel_resolution[1] * 3 / 20)
 
         self.add_drink = Button(self.a_panel, text="Add drink", font=(Font("default"), 18), command=lambda: self.order_add("Drink"))
-        self.add_drink.place(x=self.a_panel_resolution[0] * 1 / 8, y=self.a_panel_resolution[1] * 5 / 20, width=self.a_panel_resolution[0] * 3 / 4, height=self.a_panel_resolution[1] * 3 / 20)
+        self.add_drink.place(x=self.a_panel_resolution[0] * 1 / 8, y=self.a_panel_resolution[1] * 5 / 20, width=self.a_panel_resolution[0] * 3 / 4,
+                             height=self.a_panel_resolution[1] * 3 / 20)
 
         # Right side
         self.b_panel = Frame(self.front, bg=Colour("Grey"))
         self.b_panel_resolution = (self.front_resolution[0] / 2, self.front_resolution[1])
         self.b_panel.place(x=self.a_panel_resolution[0], y=0, width=self.b_panel_resolution[0], height=self.b_panel_resolution[1])
 
-        self.itemlist = Listbox(self.b_panel, bg=Colour("light_black"), fg=Colour("white"))
-        self.itemlist.place(x=self.b_panel_resolution[0] * 1 / 10, y=self.b_panel_resolution[1] * 1 / 20, width=self.b_panel_resolution[0] * 6 / 10, height=self.b_panel_resolution[1] * 15 / 20)
+        self.item_list = Listbox(self.b_panel, bg=Colour("light_black"), fg=Colour("white"))
+        self.item_list.place(x=self.b_panel_resolution[0] * 1 / 10, y=self.b_panel_resolution[1] * 1 / 20, width=self.b_panel_resolution[0] * 6 / 10,
+                            height=self.b_panel_resolution[1] * 15 / 20)
+        self.item_list.bind("<Double-1>", lambda _: self.check())
 
-        self.costlist = Listbox(self.b_panel, bg=Colour("light_black"), fg=Colour("white"))
-        self.costlist.place(x=self.b_panel_resolution[0] * 7 / 10, y=self.b_panel_resolution[1] * 1 / 20, width=self.b_panel_resolution[0] * 2 / 10, height=self.b_panel_resolution[1] * 15 / 20)
-
+        self.cost_list = Listbox(self.b_panel, bg=Colour("light_black"), fg=Colour("white"))
+        self.cost_list.place(x=self.b_panel_resolution[0] * 7 / 10, y=self.b_panel_resolution[1] * 1 / 20, width=self.b_panel_resolution[0] * 2 / 10,
+                            height=self.b_panel_resolution[1] * 15 / 20)
+        
+        self.information_list = []
+        
         self.total_lab = Label(self.b_panel, text="Total: ", bg=Colour("grey"), fg=Colour("white"), font=(Font("default"), 11), anchor=E)
-        self.total_lab.place(x=self.b_panel_resolution[0] * 1 / 10, y=self.b_panel_resolution[1] * 17 / 20, width=self.b_panel_resolution[0] * 6 / 10, height=self.b_panel_resolution[1] * 2 / 20)
+        self.total_lab.place(x=self.b_panel_resolution[0] * 1 / 10, y=self.b_panel_resolution[1] * 17 / 20, width=self.b_panel_resolution[0] * 6 / 10,
+                             height=self.b_panel_resolution[1] * 2 / 20)
 
         self.total_val = round(float(self.total_var), 2)
 
-        self.total = Label(self.b_panel, text="£ %i" %self.total_val, bg=Colour("dark_grey"), fg=Colour("white"), font=(Font("default"), 12))
-        self.total.place(x=self.b_panel_resolution[0] * 7 / 10, y=self.b_panel_resolution[1] * 17 / 20, width=self.b_panel_resolution[0] * 2 / 10, height=self.b_panel_resolution[1] * 2 / 20)
+        self.total = Label(self.b_panel, text="£ %i" % self.total_val, bg=Colour("dark_grey"), fg=Colour("white"), font=(Font("default"), 12))
+        self.total.place(x=self.b_panel_resolution[0] * 7 / 10, y=self.b_panel_resolution[1] * 17 / 20, width=self.b_panel_resolution[0] * 2 / 10,
+                         height=self.b_panel_resolution[1] * 2 / 20)
 
         # Bottom Ribbon
         self.ribbon = Frame(self.back, bg=Colour("light_black"))
@@ -113,7 +133,7 @@ class Application(Frame):
 
     def update_total(self):
         self.total_var = "{:.2f}".format(round(self.total_var, 2))
-        self.total.config(text="£ %s" %self.total_var)
+        self.total.config(text="£ %s" % self.total_var)
         self.total_var = float(self.total_var)
 
     def con(self):
@@ -125,7 +145,8 @@ class Application(Frame):
         self.c_panel_resolution = (self.front_resolution[0], self.front_resolution[1])
         self.c_panel.place(x=0, y=0, width=self.c_panel_resolution[0], height=self.c_panel_resolution[1])
 
-        self.final_label = Label(self.c_panel, text="The total for the order came to £%s" %"{:.2f}".format(round(self.total_var, 2)), bg=Colour("grey"), fg=Colour("white"), wraplength=self.c_panel_resolution[0] * 9 / 10, font=(Font("default"), 48))
+        self.final_label = Label(self.c_panel, text="The total for the order came to £%s" % "{:.2f}".format(round(self.total_var, 2)), bg=Colour("grey"), fg=Colour("white"),
+                                 wraplength=self.c_panel_resolution[0] * 9 / 10, font=(Font("default"), 48))
         self.final_label.place(x=0, y=0, width=self.c_panel_resolution[0], height=self.c_panel_resolution[1])
 
         # Ribbon
@@ -146,21 +167,83 @@ class Application(Frame):
             # Confirmation
             self.conf = popup.ask(self, action="make new order").show()
 
-            self.itemlist.delete(0, END)
-            self.costlist.delete(0, END)
+            self.item_list.delete(0, END)
+            self.cost_list.delete(0, END)
             self.defaults()
-            self.update_total()
 
-        # Top
-        self.c_panel.place_forget()
-        self.final_label.place_forget()
+        self.update_total()
+
+        try:
+            self.c_panel.place_forget()
+        except:
+            pass
+
+        try:
+            self.d_panel.place_forget()
+        except:
+            pass
+
+        try:
+            self.final_label.place_forget()
+        except:
+            pass
 
         self.a_panel.place(x=0, y=0, width=self.b_panel_resolution[0], height=self.b_panel_resolution[1])
         self.b_panel.place(x=self.a_panel_resolution[0], y=0, width=self.b_panel_resolution[0], height=self.b_panel_resolution[1])
 
         # Ribbon
-        self.con_ribbon.place_forget()
+        try:
+            self.con_ribbon.place_forget()
+        except:
+            pass
+
+        try:
+            self.chk_ribbon.place_forget()
+        except:
+            pass
+
         self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
+
+    def check(self):
+        self.cs = self.item_list.curselection()
+
+        # Top
+        self.a_panel.place_forget()
+        self.b_panel.place_forget()
+
+        self.d_panel = Frame(self.front, bg=Colour("grey"))
+        self.d_panel_resolution = (self.front_resolution[0], self.front_resolution[1])
+        self.d_panel.place(x=0, y=0, width=self.d_panel_resolution[0], height=self.d_panel_resolution[1])
+
+        self.check_dict = self.information_list[self.cs[0]]
+        self.keys = get_keys(self.check_dict)
+
+        self.rows = len(self.keys) + 2
+
+        for self.i in range(len(self.keys)):
+            print(self.keys[self.i])
+            # TODO: Make either two labels or one label in total
+
+        # Ribbon
+        self.ribbon.place_forget()
+
+        self.chk_ribbon = Frame(self.back, bg=Colour("light_black"))
+        self.chk_ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
+
+        self.removal = Button(self.chk_ribbon, text="Remove", fg=Colour("white"), bg=Colour("orange"), font=(Font("default"), 18), command=lambda: self.removing(self.cs))
+        self.removal.place(x=self.ribbon_resolution[0] * 70 / 100, y=0, width=self.ribbon_resolution[0] * 25 / 100,
+                           height=self.ribbon_resolution[1])
+
+        self.returning = Button(self.chk_ribbon, text="Back", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.order_handle())
+        self.returning.place(x=self.ribbon_resolution[0] * 5 / 100, y=0, width=self.ribbon_resolution[0] * 65 / 100,
+                             height=self.ribbon_resolution[1])
+
+    def removing(self, index):
+        self.item_list.delete(index)
+        self.cost_list.delete(index)
+        self.information_list.pop(index[0])
+
+        self.order_handle()
 
     def ex(self):
         self.conf = popup.ask(self, action="exit").show()
@@ -170,32 +253,38 @@ class Application(Frame):
     def res(self):
         self.conf = popup.ask(self, action="reset order").show()
         if self.conf:
-            self.itemlist.delete(0, END)
-            self.costlist.delete(0, END)
+            self.item_list.delete(0, END)
+            self.cost_list.delete(0, END)
+            self.information_list = []
             self.defaults()
             self.update_total()
 
     def order_add(self, addition_type):
-        if self.itemlist.size() == self.max_order_size:
-            print("Max order size!") #TODO: Fix max order info!
+        if self.item_list.size() == self.max_order_size:
+            print("Max order size!")  # TODO: Make label for max order size
             return
 
         self.main, self.price, self.type_selection, self.type = order_add.Order_Add(self, additional_type=addition_type).show()
         self.dict = {}
 
+        if not self.main or not self.price or not self.type_selection or not self.type:
+            return
+
         for self.i in range(len(self.type)):
             self.dict[self.type[self.i]] = self.type_selection[self.i]
 
+        self.information_list.append(self.dict)
+
         if len(self.type_selection) == len(self.type) and self.type_selection:
             try:
-                self.itemlist.insert(END, addition_type + ": " + self.dict[self.main])
+                self.item_list.insert(END, addition_type + ": " + self.dict[self.main])
             except KeyError:
                 raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
 
             try:
-                self.costlist.insert(END, " £ " + str("{:.2f}".format(self.price)))
+                self.cost_list.insert(END, " £ " + str("{:.2f}".format(self.price)))
             except KeyError:
-                self.itemlist.delete(END)
+                self.item_list.delete(END)
                 raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
 
             self.total_var += self.price

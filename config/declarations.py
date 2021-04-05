@@ -33,26 +33,69 @@ ERROR = #F04747
 
 
 def declarations():
-    pizza_types: Dict[str, float] = {"name": "pizza_types",
-                                     "Cheese and Tomato": 3.5,
-                                     "Ham and pineapple": 4.2,
-                                     "Vegetarian": 5.2,
-                                     "Meat feast": 5.8,
-                                     "Seafood": 5.6
-                                     }
+    # pizza_types: Dict[str, float] = {"name": "pizza_types",
+    #                                  "Cheese and Tomato": 3.5,
+    #                                  "Ham and pineapple": 4.2,
+    #                                  "Vegetarian": 5.2,
+    #                                  "Meat feast": 5.8,
+    #                                  "Seafood": 5.6
+    #                                  }
+    #
+    # pizza_bases: Dict[str, float] = {"name": "pizza_bases",
+    #                                  "Traditional": 0,
+    #                                  "Thin and Crispy": 0
+    #                                  }
+    #
+    # pizza_toppings: Dict[str, float] = {"name": "pizza_toppings",
+    #                                     " ": 0,
+    #                                     "Cheese": 0.5,
+    #                                     "Pepperoni": 0.5,
+    #                                     "Onions": 0.5,
+    #                                     "Peppers": 0.5
+    #                                     }
 
-    pizza_bases: Dict[str, float] = {"name": "pizza_bases",
-                                     "Traditional": 0,
-                                     "Thin and Crispy": 0
-                                     }
+    pizza = [
+        # # Pizza Size
+        # {"name": "pizza_size",
+        #  "small" : 0,
+        #  "medium" : 1.8,
+        #  "large" : 2.5,
+        #  "XL" : 3.15
+        #  },
 
-    pizza_toppings: Dict[str, float] = {"name": "pizza_toppings",
-                                        " ": 0,
-                                        "Cheese": 0.5,
-                                        "Pepperoni": 0.5,
-                                        "Onions": 0.5,
-                                        "Peppers": 0.5
-                                        }
+        # Pizza Bases
+        {"name": "pizza_bases",
+         "Traditional": 0,
+         "Thin and Crispy": 0
+         },
+
+        # Pizza Types
+        {"name": "pizza_types",
+         "Cheese and Tomato": 3.5,
+         "Ham and pineapple": 4.2,
+         "Vegetarian": 5.2,
+         "Meat feast": 5.8,
+         "Seafood": 5.6
+         },
+
+        # Pizza 1st Topping
+        {"name": "pizza_toppings",
+         " ": 0,
+         "Cheese": 0.5,
+         "Pepperoni": 0.5,
+         "Onions": 0.5,
+         "Peppers": 0.5
+         },
+
+        # # Pizza 2nd Topping
+        # {"name": "pizza_toppings",
+        #  " ": 0,
+        #  "Cheese": 0.5,
+        #  "Pepperoni": 0.5,
+        #  "Onions": 0.5,
+        #  "Peppers": 0.5
+        #  }
+    ]
 
     drink: Dict[str, float] = {"name": "drink",
                                "Cola": 0.9,
@@ -96,7 +139,7 @@ def declarations():
                         configs[config_name] = config_option
                 i += 1
 
-    return configs, (pizza_bases, pizza_types, pizza_toppings), drink
+    return configs, pizza, drink
 
 
 # class RoundedButton(Canvas):

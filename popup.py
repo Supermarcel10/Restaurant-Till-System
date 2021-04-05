@@ -34,6 +34,7 @@ class ask(object):
     def set_properties(self):
         self.settings()
 
+        self.master.overrideredirect(1)
         self.master.resizable(False, False)
         self.master.geometry(str(self.width) + "x" + str(self.height))
 
@@ -41,38 +42,49 @@ class ask(object):
                     "y": int(self.master.winfo_screenheight() / 2 - self.height / 2)}
         self.master.geometry("+{}+{}".format(self.position["x"], self.position["y"]))
 
+        self.master.title(self.title)
+
         # directory = path.dirname(__file__)
         # self.master.tk.call('wm', 'iconphoto', root._w, PhotoImage(file=path.relpath("..\\icon.ico", directory)))
         # TODO: Fix icon
 
     def settings(self):
-        self.height = 100
-        self.width = 200
+        self.title = "Confirmation"
+
+        self.height = 140
+        self.width = 230
+
+        self.highlight_width = 2
+        self.highlight_color = Colour("orange")
 
     def create_widgets(self):
-        back = Frame(self.master, bg=Colour("grey"), height=self.height, width=self.width)
-        back.pack_propagate(0)
-        back.pack(fill=BOTH, expand=1)
+        self.highlight = Frame(self.master, bg=Colour("orange"), height=self.height, width=self.width)
+        self.highlight.pack(fill=BOTH, expand=1)
 
-        resolution = (self.width, self.height)
+        self.resolution = (self.width - (self.highlight_width * 2), self.height - (self.highlight_width * 2))
 
-        front = Frame(back, bg=Colour("grey"), height=self.height, width=self.width)
-        front_resolution = (self.width, self.height * 5 / 8)
-        front.place(x=resolution[0] / 2, y=front_resolution[1], anchor="s", width=front_resolution[0],
-                    height=front_resolution[1])
+        self.back = Frame(self.highlight, bg=Colour("light_black"), height=self.height - self.highlight_width, width=self.width - self.highlight_width)
+        self.back.pack_propagate(0)
+        self.back.place(x=self.highlight_width, y=self.highlight_width, width=self.resolution[0], height=self.resolution[1])
 
-        lab = Label(front, bg=Colour("grey"), fg=Colour("white"), wraplength=self.width * 9 / 10, text="Are you sure you want to %s?" % self.action)
-        lab.place(x=0, y=0, height=front_resolution[1], width=self.width)
+        self.front = Frame(self.back, bg=Colour("light_black"), height=self.height, width=self.width)
+        self.front_resolution = (self.width - 2, self.height * 11 / 16)
+        self.front.place(x=self.resolution[0] / 2, y=self.front_resolution[1], anchor="s", width=self.front_resolution[0],
+                    height=self.front_resolution[1])
 
-        ribbon = Frame(back, bg=Colour("light_black"))
-        ribbon_resolution = (self.width, self.height * 3 / 8)
-        ribbon.place(x=resolution[0] / 2, y=resolution[1], anchor="s", width=self.width, height=ribbon_resolution[1])
+        self.lab = Label(self.front, bg=Colour("dark_grey"), fg=Colour("white"), wraplength=self.width * 9 / 10, font=(Font("default"), 16),
+                         text="Are you sure you want to %s?" % self.action)
+        self.lab.place(x=0, y=0, height=self.front_resolution[1], width=self.width - (self.highlight_width * 2))
 
-        no = Button(ribbon, text="No", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.returning(False))
-        no.place(x=ribbon_resolution[0] * 1 / 8, y=0, width=ribbon_resolution[0] * 3 / 8, height=ribbon_resolution[1])
+        self.ribbon = Frame(self.back, bg=Colour("grey"))
+        self.ribbon_resolution = (self.width, self.height * 5 / 16)
+        self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.width, height=self.ribbon_resolution[1])
 
-        yes = Button(ribbon, text="Yes", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: self.returning(True))
-        yes.place(x=ribbon_resolution[0] * 1 / 2, y=0, width=ribbon_resolution[0] * 3 / 8, height=ribbon_resolution[1])
+        self.no = Button(self.ribbon, text="No", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.returning(False))
+        self.no.place(x=self.ribbon_resolution[0] * 1 / 8, y=0, width=self.ribbon_resolution[0] * 3 / 8, height=self.ribbon_resolution[1])
+
+        self.yes = Button(self.ribbon, text="Yes", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: self.returning(True))
+        self.yes.place(x=self.ribbon_resolution[0] * 1 / 2, y=0, width=self.ribbon_resolution[0] * 3 / 8, height=self.ribbon_resolution[1])
 
     def returning(self, val):
         self.val = val
@@ -82,4 +94,7 @@ class ask(object):
         self.master.deiconify()
         self.master.wait_window()
 
-        return self.val
+        try:
+            return self.val
+        except:
+            return None
