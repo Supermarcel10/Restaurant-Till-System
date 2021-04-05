@@ -98,15 +98,15 @@ class Application(Frame):
 
         self.item_list = Listbox(self.b_panel, bg=Colour("light_black"), fg=Colour("white"))
         self.item_list.place(x=self.b_panel_resolution[0] * 1 / 10, y=self.b_panel_resolution[1] * 1 / 20, width=self.b_panel_resolution[0] * 6 / 10,
-                            height=self.b_panel_resolution[1] * 15 / 20)
+                             height=self.b_panel_resolution[1] * 15 / 20)
         self.item_list.bind("<Double-1>", lambda _: self.check())
 
         self.cost_list = Listbox(self.b_panel, bg=Colour("light_black"), fg=Colour("white"))
         self.cost_list.place(x=self.b_panel_resolution[0] * 7 / 10, y=self.b_panel_resolution[1] * 1 / 20, width=self.b_panel_resolution[0] * 2 / 10,
-                            height=self.b_panel_resolution[1] * 15 / 20)
-        
+                             height=self.b_panel_resolution[1] * 15 / 20)
+
         self.information_list = []
-        
+
         self.total_lab = Label(self.b_panel, text="Total: ", bg=Colour("grey"), fg=Colour("white"), font=(Font("default"), 11), anchor=E)
         self.total_lab.place(x=self.b_panel_resolution[0] * 1 / 10, y=self.b_panel_resolution[1] * 17 / 20, width=self.b_panel_resolution[0] * 6 / 10,
                              height=self.b_panel_resolution[1] * 2 / 20)
@@ -217,12 +217,37 @@ class Application(Frame):
 
         self.check_dict = self.information_list[self.cs[0]]
         self.keys = get_keys(self.check_dict)
+        self.values = []
 
+        for self.e in range(len(self.keys)):
+            self.values.append(self.check_dict[self.keys[self.e]])
+        # try:
+        #     self.name = pizza[self.i]["name"]
+        #     self.rawnames.append(self.name)
+        #     if "_" in self.name:
+        #         self.name = self.name.replace("_", " ")
+        #     if self.name.endswith("s"):
+        #         self.name = self.name[:-1]
+        #     self.names.append(self.name)
+        #     self.name = self.name.title() + ":"
+        #
+        #     self.visible_keys = self.keys.copy()
+        #     self.visible_keys.pop(0)
+        # except KeyError:
+        #     raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
+        #
         self.rows = len(self.keys) + 2
 
         for self.i in range(len(self.keys)):
-            print(self.keys[self.i])
-            # TODO: Make either two labels or one label in total
+            self.name = self.keys[self.i]
+            if "_" in self.name:
+                self.name = self.name.replace("_", " ")
+            if self.name.endswith("s"):
+                self.name = self.name[:-1]
+
+            self.info = Label(self.d_panel, text=self.name.title() + ": " + self.values[self.i].title(), bg=Colour("grey"), fg=Colour("white"),
+                              wraplength=self.d_panel_resolution[0] * 9 / 10, font=(Font("default"), 20))
+            self.info.place(x=0, y=self.d_panel_resolution[1] / self.rows * (self.i + 1), width=self.d_panel_resolution[0], height=self.d_panel_resolution[1] / self.rows)
 
         # Ribbon
         self.ribbon.place_forget()
