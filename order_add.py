@@ -34,8 +34,15 @@ class Order_Add(object):
     def settings(self):
         self.title = "Add %s" %self.type
 
-        self.height = 700
-        self.width = 500
+        if self.type.lower() == "pizza":
+            self.height = 700
+            self.width = 500
+        elif self.type.lower() == "drink":
+            self.height = 400
+            self.width = 500
+        else:
+            self.height = 700
+            self.width = 500
 
     def create_widgets(self):
         self.back = Frame(self.master, bg=Colour("dark_grey"))
@@ -44,12 +51,12 @@ class Order_Add(object):
 
         self.resolution = (self.width, self.height)
 
-        self.front = Frame(self.back, bg=Colour("grey"), height=self.height, width=self.width)
-        self.front_resolution = (self.width, self.height * 11 / 12)
-        self.front.place(x=self.resolution[0] / 2, y=self.front_resolution[1], anchor="s", width=self.front_resolution[0], height=self.front_resolution[1])
-
         if self.type.lower() == "drink":
-            self.rows = 7
+            self.front = Frame(self.back, bg=Colour("grey"), height=self.height, width=self.width)
+            self.front_resolution = (self.width, self.height * 10.5 / 12)
+            self.front.place(x=self.resolution[0] / 2, y=self.front_resolution[1], anchor="s", width=self.front_resolution[0], height=self.front_resolution[1])
+
+            self.rows = 5
             self.main = "drink"
 
             self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Drink:")
@@ -78,25 +85,39 @@ class Order_Add(object):
 
             self.om = OptionMenu(self.front, self.var, *self.visible_keys)
             self.om.place(x=self.front_resolution[0] * 1 / 4, y=self.front_resolution[1] * 1 / self.rows, width=self.front_resolution[0] * 1 / 2,
-                          height=self.front_resolution[1] / self.rows)
-            self.om.config(bg=Colour("light_black"), fg=Colour("white"), border=0)
+                          height=(self.front_resolution[1] / self.rows) * 8 / 10)
+            self.om.config(bg=Colour("light_black"), fg=Colour("white"), font=(Font("default"), 14), border=0)
             self.om["menu"].config(bg=Colour("light_grey"), fg=Colour("black"))
 
             self.oms.append(self.om)
             self.vars.append(self.var)
 
             self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Additional Information:")
-            self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] * 3 / self.rows, width=self.front_resolution[0] * 3 / 4,
+            self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] * 2 / self.rows, width=self.front_resolution[0] * 3 / 4,
                            height=self.front_resolution[1] / self.rows)
 
             self.ent = Entry(self.front, bg=Colour("light_black"), fg=Colour("white"))
-            self.ent.place(x=self.front_resolution[0] * 1 / 4, y=self.front_resolution[1] * 4 / self.rows, width=self.front_resolution[0] * 1 / 2,
-                           height=self.front_resolution[1] / self.rows)
+            self.ent.place(x=self.front_resolution[0] * 1 / 4, y=self.front_resolution[1] * 3 / self.rows, width=self.front_resolution[0] * 1 / 2,
+                           height=(self.front_resolution[1] / self.rows) * 8 / 10)
 
             self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
-            self.info.place(x=0, y=self.front_resolution[1] * 6 / self.rows, width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
+            self.info.place(x=0, y=self.front_resolution[1] * 4 / self.rows, width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
+
+            self.ribbon = Frame(self.back, bg=Colour("light_black"))
+            self.ribbon_resolution = (self.width, self.height * 1.5 / 12)
+            self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
+
+            self.cancel = Button(self.ribbon, text="Cancel", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: self.quitting())
+            self.cancel.place(x=self.ribbon_resolution[0] * 2 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
+
+            self.accept = Button(self.ribbon, text="Continue", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.adding())
+            self.accept.place(x=self.ribbon_resolution[0] * 7 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
 
         elif self.type.lower() == "pizza":
+            self.front = Frame(self.back, bg=Colour("grey"), height=self.height, width=self.width)
+            self.front_resolution = (self.width, self.height * 11 / 12)
+            self.front.place(x=self.resolution[0] / 2, y=self.front_resolution[1], anchor="s", width=self.front_resolution[0], height=self.front_resolution[1])
+
             self.rows = (len(pizza) * 2) + 4
             self.main = "pizza_types"
 
@@ -129,8 +150,8 @@ class Order_Add(object):
 
                 self.om = OptionMenu(self.front, self.var, *self.visible_keys)
                 self.om.place(x=self.front_resolution[0] * 1 / 4, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 0.5), width=self.front_resolution[0] * 1 / 2,
-                              height=self.front_resolution[1] / self.rows)
-                self.om.config(bg=Colour("light_black"), fg=Colour("white"), border=0)
+                              height=(self.front_resolution[1] / self.rows) * 8 / 10)
+                self.om.config(bg=Colour("light_black"), fg=Colour("white"), font=(Font("default"), 14), border=0)
                 self.om["menu"].config(bg=Colour("light_grey"), fg=Colour("black"))
 
                 self.oms.append(self.om)
@@ -142,20 +163,20 @@ class Order_Add(object):
 
             self.ent = Entry(self.front, bg=Colour("light_black"), fg=Colour("white"))
             self.ent.place(x=self.front_resolution[0] * 1 / 4, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 1.5), width=self.front_resolution[0] * 1 / 2,
-                           height=self.front_resolution[1] / self.rows)
+                           height=(self.front_resolution[1] / self.rows) * 8 / 10)
 
             self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
             self.info.place(x=0, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 2.5), width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
 
-        self.ribbon = Frame(self.back, bg=Colour("light_black"))
-        self.ribbon_resolution = (self.width, self.height / 12)
-        self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
+            self.ribbon = Frame(self.back, bg=Colour("light_black"))
+            self.ribbon_resolution = (self.width, self.height / 12)
+            self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
 
-        self.cancel = Button(self.ribbon, text="Cancel", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: self.quitting())
-        self.cancel.place(x=self.ribbon_resolution[0] * 2 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
+            self.cancel = Button(self.ribbon, text="Cancel", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: self.quitting())
+            self.cancel.place(x=self.ribbon_resolution[0] * 2 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
 
-        self.accept = Button(self.ribbon, text="Continue", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.adding())
-        self.accept.place(x=self.ribbon_resolution[0] * 7 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
+            self.accept = Button(self.ribbon, text="Continue", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.adding())
+            self.accept.place(x=self.ribbon_resolution[0] * 7 / 13, y=0, width=self.ribbon_resolution[0] * 4 / 13, height=self.ribbon_resolution[1])
 
 
     def quitting(self):
