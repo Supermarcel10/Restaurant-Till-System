@@ -33,27 +33,6 @@ ERROR = #F04747
 
 
 def declarations():
-    # pizza_types: Dict[str, float] = {"name": "pizza_types",
-    #                                  "Cheese and Tomato": 3.5,
-    #                                  "Ham and pineapple": 4.2,
-    #                                  "Vegetarian": 5.2,
-    #                                  "Meat feast": 5.8,
-    #                                  "Seafood": 5.6
-    #                                  }
-    #
-    # pizza_bases: Dict[str, float] = {"name": "pizza_bases",
-    #                                  "Traditional": 0,
-    #                                  "Thin and Crispy": 0
-    #                                  }
-    #
-    # pizza_toppings: Dict[str, float] = {"name": "pizza_toppings",
-    #                                     " ": 0,
-    #                                     "Cheese": 0.5,
-    #                                     "Pepperoni": 0.5,
-    #                                     "Onions": 0.5,
-    #                                     "Peppers": 0.5
-    #                                     }
-
     pizza = [
         # # Pizza Size
         # {"name": "pizza_size",
@@ -72,9 +51,9 @@ def declarations():
         # Pizza Types
         {"name": "pizza_types",
          "Cheese and Tomato": 3.5,
-         "Ham and pineapple": 4.2,
+         "Ham and Pineapple": 4.2,
          "Vegetarian": 5.2,
-         "Meat feast": 5.8,
+         "Meat Feast": 5.8,
          "Seafood": 5.6
          },
 
