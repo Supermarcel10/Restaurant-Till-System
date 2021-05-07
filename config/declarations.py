@@ -34,13 +34,13 @@ ERROR = #F04747
 
 def declarations():
     pizza = [
-        # # Pizza Size
-        # {"name": "pizza_size",
-        #  "small" : 0,
-        #  "medium" : 1.8,
-        #  "large" : 2.5,
-        #  "XL" : 3.15
-        #  },
+        # Pizza Size
+        {"name": "pizza_size",
+         "small" : 0,
+         "medium" : 1.8,
+         "large" : 2.5,
+         "XL" : 3.15
+         },
 
         # Pizza Bases
         {"name": "pizza_bases",
@@ -66,14 +66,14 @@ def declarations():
          "Peppers": 0.5
          },
 
-        # # Pizza 2nd Topping
-        # {"name": "pizza_toppings",
-        #  " ": 0,
-        #  "Cheese": 0.5,
-        #  "Pepperoni": 0.5,
-        #  "Onions": 0.5,
-        #  "Peppers": 0.5
-        #  }
+        # Pizza 2nd Topping
+        {"name": "pizza_toppings",
+         " ": 0,
+         "Cheese": 0.5,
+         "Pepperoni": 0.5,
+         "Onions": 0.5,
+         "Peppers": 0.5
+         }
     ]
 
     drink: Dict[str, float] = {"name": "drink",

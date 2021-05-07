@@ -1,6 +1,13 @@
 from main import *
 
 
+def get_keys(dictionary):
+    keys = []
+    for key in dictionary.keys():
+        keys.append(key)
+    return keys
+
+
 class Order_Add(object):
     def __init__(self, parent, additional_type):
         self.master = Toplevel(parent)

@@ -80,11 +80,11 @@ class ask(object):
         self.ribbon_resolution = (self.width, self.height * 5 / 16)
         self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.width, height=self.ribbon_resolution[1])
 
-        self.no = Button(self.ribbon, text="No", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.returning(False))
-        self.no.place(x=self.ribbon_resolution[0] * 1 / 8, y=0, width=self.ribbon_resolution[0] * 3 / 8, height=self.ribbon_resolution[1])
+        self.no = Button(self.ribbon, text="No", fg=Colour("white"), bg=Colour("orange"), font=(Font("default"), 18), command=lambda: self.returning(False))
+        self.no.place(x=self.ribbon_resolution[0] * 1 / 2, y=0, width=self.ribbon_resolution[0] * 3 / 8, height=self.ribbon_resolution[1])
 
-        self.yes = Button(self.ribbon, text="Yes", fg=Colour("white"), bg=Colour("red"), font=(Font("default"), 18), command=lambda: self.returning(True))
-        self.yes.place(x=self.ribbon_resolution[0] * 1 / 2, y=0, width=self.ribbon_resolution[0] * 3 / 8, height=self.ribbon_resolution[1])
+        self.yes = Button(self.ribbon, text="Yes", fg=Colour("white"), bg=Colour("green"), font=(Font("default"), 18), command=lambda: self.returning(True))
+        self.yes.place(x=self.ribbon_resolution[0] * 1 / 8, y=0, width=self.ribbon_resolution[0] * 3 / 8, height=self.ribbon_resolution[1])
 
     def returning(self, val):
         self.val = val
