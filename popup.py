@@ -44,10 +44,6 @@ class ask(object):
 
         self.master.title(self.title)
 
-        # directory = path.dirname(__file__)
-        # self.master.tk.call('wm', 'iconphoto', root._w, PhotoImage(file=path.relpath("..\\icon.ico", directory)))
-        # TODO: Fix icon
-
     def settings(self):
         self.title = "Confirmation"
 

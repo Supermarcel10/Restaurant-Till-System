@@ -5,7 +5,6 @@ import popup as popup
 from menu import MainMenu as menu
 
 configs, pizza, drink = declarations()
-additional_requests = ""
 
 
 def Colour(col):
@@ -26,7 +25,6 @@ def Font(font):
 
 class Login(Frame):
     def __init__(self, master=None):
-        # super().__init__(master)
         self.master = master
         self.set_properties()
         self.defaults()
@@ -56,8 +54,6 @@ class Login(Frame):
 
         self.height = 400
         self.width = 600
-
-        self.max_order_size = 10
 
     def create_widgets(self):
         # Whole
@@ -128,9 +124,6 @@ class Login(Frame):
             self.info["text"] = "Password cannot be empty!"
 
         if self.password.get() == "Test123!" and self.username.get().lower() == "marcel":  # TODO: Change validation to a database
-            self.username.delete(0, "end")
-            self.password.delete(0, "end")
-            self.info["text"] = ""
             self.correct = True
             self.master.destroy()
         elif self.password.get() and self.username.get():
@@ -160,7 +153,6 @@ if __name__ == "__main__":
 
     if login_output == "exit":
         exit()
-
     elif login_output == "correct":
         root = Tk()
         menu(master=root)
