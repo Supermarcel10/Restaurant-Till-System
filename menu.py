@@ -41,7 +41,6 @@ class MainMenu(Frame):
 
     def set_properties(self):
         self.settings()
-
         self.master.resizable(False, False)
         self.master.geometry(str(self.width) + "x" + str(self.height))
 

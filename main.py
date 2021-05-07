@@ -26,9 +26,8 @@ def Font(font):
 
 class Login(Frame):
     def __init__(self, master=None):
-        super().__init__(master)
+        # super().__init__(master)
         self.master = master
-        self.pack()
         self.set_properties()
         self.defaults()
         self.create_widgets()
@@ -62,7 +61,7 @@ class Login(Frame):
 
     def create_widgets(self):
         # Whole
-        self.back = Frame(self, bg=Colour("grey"), height=self.height, width=self.width)
+        self.back = Frame(self.master, bg=Colour("grey"), height=self.height, width=self.width)
         self.back = Frame(self.master, bg=Colour("dark_grey"))
         self.back.pack_propagate(0)
         self.back.pack(fill=BOTH, expand=1)
@@ -109,9 +108,10 @@ class Login(Frame):
         self.cont.place(x=self.ribbon_resolution[0] * 7 / 14, y=0, width=self.ribbon_resolution[0] * 6 / 14, height=self.ribbon_resolution[1])
 
     def ex(self):
-        self.conf = popup.ask(self, action="exit").show()
-        if self.conf:
-            exit()
+        self.exit_conf = popup.ask(self.master, action="exit").show()
+
+        if self.exit_conf:
+            self.master.destroy()
 
     def res(self):
         self.conf = popup.ask(self, action="reset information").show()
@@ -132,21 +132,36 @@ class Login(Frame):
             self.password.delete(0, "end")
             self.info["text"] = ""
             self.correct = True
+            self.master.destroy()
         elif self.password.get() and self.username.get():
             self.username.delete(0, "end")
             self.password.delete(0, "end")
             self.info["text"] = "Incorrect password / username!"
             self.correct = False
 
-    def menu(self, master):
+    def show(self):
         self.master.deiconify()
         self.master.wait_window()
+
+        try:
+            if self.exit_conf:
+                return "exit"
+        except:
+            pass
+
         if self.correct:
-            return
+            return "correct"
+
 
 if __name__ == "__main__":
     root = Tk()
-    Login.menu(master=root)
+    login_output = Login(master=root).show()
     root.mainloop()
 
-    menu(master=root)
+    if login_output == "exit":
+        exit()
+
+    elif login_output == "correct":
+        root = Tk()
+        menu(master=root)
+        root.mainloop()
