@@ -1,7 +1,7 @@
 from main import *
 from tkinter import *
 
-configs, pizza, drink = declarations()
+configs, _, _ = declarations()
 additional_requests = ""
 
 

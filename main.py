@@ -44,10 +44,9 @@ class Login(Frame):
 
         # self.master.tk.call('wm', 'iconphoto', root._w, PhotoImage(file="icon.ico")) #TODO: Fix icon
 
-        self.correct = False
 
     def defaults(self):
-        self.total_var = 0
+        self.correct = False
 
     def settings(self):
         self.title = "Pizza"

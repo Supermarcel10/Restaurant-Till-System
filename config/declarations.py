@@ -66,14 +66,14 @@ def declarations():
          "Peppers": 0.5
          },
 
-        # Pizza 2nd Topping
-        {"name": "pizza_toppings",
-         " ": 0,
-         "Cheese": 0.5,
-         "Pepperoni": 0.5,
-         "Onions": 0.5,
-         "Peppers": 0.5
-         }
+        # # Pizza 2nd Topping
+        # {"name": "pizza_toppings",
+        #  " ": 0,
+        #  "Cheese": 0.5,
+        #  "Pepperoni": 0.5,
+        #  "Onions": 0.5,
+        #  "Peppers": 0.5
+        #  }
     ]
 
     drink: Dict[str, float] = {"name": "drink",

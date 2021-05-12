@@ -78,7 +78,6 @@ class Order_Add(object):
                 self.name = drink["name"]
                 self.rawnames.append(self.name)
                 if "_" in self.name:
-                    print("_ in name")
                     self.name = self.name.replace("_", " ")
                 if self.name.endswith("s"):
                     self.name = self.name[:-1]

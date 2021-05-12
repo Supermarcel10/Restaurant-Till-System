@@ -4,8 +4,6 @@ from tkinter import *
 from config.declarations import declarations as declarations
 
 configs, pizza, drink = declarations()
-additional_requests = ""
-
 
 def Colour(col):
     try:
@@ -206,6 +204,13 @@ class MainMenu(Frame):
     def check(self):
         self.cs = self.item_list.curselection()
 
+        try:
+            self.check_dict = self.information_list[self.cs[0]]
+            self.keys = get_keys(self.check_dict)
+            self.values = []
+        except IndexError:
+            return
+
         # Top
         self.a_panel.place_forget()
         self.b_panel.place_forget()
@@ -213,10 +218,6 @@ class MainMenu(Frame):
         self.d_panel = Frame(self.front, bg=Colour("grey"))
         self.d_panel_resolution = (self.front_resolution[0], self.front_resolution[1])
         self.d_panel.place(x=0, y=0, width=self.d_panel_resolution[0], height=self.d_panel_resolution[1])
-
-        self.check_dict = self.information_list[self.cs[0]]
-        self.keys = get_keys(self.check_dict)
-        self.values = []
 
         for self.e in range(len(self.keys)):
             self.values.append(self.check_dict[self.keys[self.e]])
