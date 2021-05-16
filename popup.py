@@ -93,4 +93,4 @@ class ask(object):
         try:
             return self.val
         except:
-            return None
+            return

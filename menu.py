@@ -134,6 +134,10 @@ class MainMenu(Frame):
         self.total_var = float(self.total_var)
 
     def con(self):
+        # Check
+        if self.cost_list.size() == 0:
+            return
+
         # Top
         self.a_panel.place_forget()
         self.b_panel.place_forget()
@@ -142,9 +146,29 @@ class MainMenu(Frame):
         self.c_panel_resolution = (self.front_resolution[0], self.front_resolution[1])
         self.c_panel.place(x=0, y=0, width=self.c_panel_resolution[0], height=self.c_panel_resolution[1])
 
+        self.tables = []
+
+        for self.g in range(1, 26):
+            self.tables.append(self.g)
+
+        self.label = Label(self.c_panel, text="Table:", bg=Colour("grey"), fg=Colour("white"), wraplength=self.c_panel_resolution[0] * 9 / 10, font=(Font("default"), 32))
+        self.label.place(x=self.c_panel_resolution[0] * 1 / 8, y=self.c_panel_resolution[1] / 7, width=self.c_panel_resolution[0] * 3 / 8, height=self.c_panel_resolution[1] / 7)
+
+        self.var = StringVar(self.front)
+        self.var.set("")
+
+        self.om = OptionMenu(self.c_panel, self.var, *self.tables)
+        self.om.place(x=self.c_panel_resolution[0] * 4 / 8, y=self.c_panel_resolution[1] / 7, width=self.c_panel_resolution[0] * 3 / 8, height=self.c_panel_resolution[1] / 7)
+        self.om.config(bg=Colour("light_black"), fg=Colour("white"), font=(Font("default"), 14), border=0)
+        self.om["menu"].config(bg=Colour("light_grey"), fg=Colour("black"))
+
         self.final_label = Label(self.c_panel, text="The total for the order came to £%s" % "{:.2f}".format(round(self.total_var, 2)), bg=Colour("grey"), fg=Colour("white"),
-                                 wraplength=self.c_panel_resolution[0] * 9 / 10, font=(Font("default"), 48))
-        self.final_label.place(x=0, y=0, width=self.c_panel_resolution[0], height=self.c_panel_resolution[1])
+                                 wraplength=self.c_panel_resolution[0] * 8 / 10, font=(Font("default"), 40))
+        self.final_label.place(x=self.c_panel_resolution[0] * 1 / 20, y=self.c_panel_resolution[1] * 3 / 7, width=self.c_panel_resolution[0] * 9 / 10, height=self.c_panel_resolution[1] *
+                                                                                                                                                              3 / 7)
+
+        self.error_info = Label(self.c_panel, text="", bg=Colour("grey"), fg=Colour("red"), font=(Font("default"), 24))
+        self.error_info.place(x=self.c_panel_resolution[0] * 0, y=self.c_panel_resolution[1] * 6 / 7, width=self.c_panel_resolution[0], height=self.c_panel_resolution[1] / 7)
 
         # Ribbon
         self.ribbon.place_forget()
@@ -161,6 +185,13 @@ class MainMenu(Frame):
     def order_handle(self, type="back"):
         # TODO: Saving to some sort of database here.
         if type == "new":
+            self.error_info["text"] = ""
+
+            # Check if table is selected
+            if not self.var.get():
+                self.error_info["text"] = "Table cannot be empty!"
+                return
+
             # Confirmation
             self.conf = popup.ask(self, action="make new order").show()
 
