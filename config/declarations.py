@@ -36,10 +36,10 @@ def declarations():
     pizza = [
         # Pizza Size
         {"name": "pizza_size",
-         "small" : 0,
-         "medium" : 1.8,
-         "large" : 2.5,
-         "XL" : 3.15
+         "Small": 0,
+         "Medium": 1.8,
+         "Large": 2.5,
+         "XL": 3.15
          },
 
         # Pizza Bases

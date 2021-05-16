@@ -36,7 +36,7 @@ class Order_Add(object):
         # TODO: Fix icon
 
     def defaults(self):
-        self.price, self.oms, self.vars, self.names, self.rawnames, self.clean_vars = 0, [], [], [], [], []
+        self.price, self.rawTotal, self.total, self.oms, self.vars, self.price_infos, self.names, self.rawnames, self.clean_vars = 0, 0, {}, [], [], [], [], [], []
 
     def settings(self):
         self.title = "Add %s" %self.type
@@ -51,6 +51,37 @@ class Order_Add(object):
             self.height = 700
             self.width = 500
 
+    def om_changed(self, lookup):
+        if self.type.lower() == "pizza":
+            for self.g in range(len(pizza)):
+                self.keys = get_keys(pizza[self.g])
+                for self.j in range(len(pizza[self.g])):
+                    if self.keys[self.j] == lookup:
+                        if pizza[self.g][lookup] == 0:
+                            self.price_infos[self.g]["text"] = "-"
+                        else:
+                            self.price_infos[self.g]["text"] = "£ %s" % "{:.2f}".format(round(pizza[self.g][lookup], 2))
+
+                        self.total[pizza[self.g]["name"]] = pizza[self.g][lookup]
+                        self.tallies = get_keys(self.total)
+
+                        for self.t in range(len(self.tallies)):
+                            self.rawTotal += self.total[self.tallies[self.t]]
+
+                        self.sum["text"] = "Total: £ %s" % "{:.2f}".format(round(self.rawTotal, 2))
+                        self.rawTotal = 0
+                        return
+        elif self.type.lower() == "drink":
+            for self.g in range(len(self.vars)):
+                if lookup == self.vars[self.g].get():
+                    if drink[lookup] == 0:
+                        self.price_infos[self.g]["text"] = "-"
+                    else:
+                        self.price_infos[self.g]["text"] = "£ %s" % "{:.2f}".format(round(drink[lookup], 2))
+
+                    self.sum["text"] = "Total: £ %s" % "{:.2f}".format(round(drink[lookup], 2))
+                    return
+
     def create_widgets(self):
         self.back = Frame(self.master, bg=Colour("dark_grey"))
         self.back.pack_propagate(0)
@@ -63,7 +94,7 @@ class Order_Add(object):
             self.front_resolution = (self.width, self.height * 10.5 / 12)
             self.front.place(x=self.resolution[0] / 2, y=self.front_resolution[1], anchor="s", width=self.front_resolution[0], height=self.front_resolution[1])
 
-            self.rows = 5
+            self.rows = 6
             self.main = "drink"
 
             self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Drink:")
@@ -89,26 +120,40 @@ class Order_Add(object):
             except KeyError:
                 raise ValueError("Fatal error occurred:\nName of dictionary not located!\nAborting!")
 
-            self.om = OptionMenu(self.front, self.var, *self.visible_keys)
-            self.om.place(x=self.front_resolution[0] * 1 / 4, y=self.front_resolution[1] * 1 / self.rows, width=self.front_resolution[0] * 1 / 2,
+            self.om = OptionMenu(self.front, self.var, *self.visible_keys, command=lambda lookup: self.om_changed(lookup))
+            self.om.place(x=self.front_resolution[0] * 3 / 16, y=self.front_resolution[1] * 1 / self.rows, width=self.front_resolution[0] * 4 / 8,
                           height=(self.front_resolution[1] / self.rows) * 8 / 10)
             self.om.config(bg=Colour("light_black"), fg=Colour("white"), font=(Font("default"), 14), border=0)
             self.om["menu"].config(bg=Colour("light_grey"), fg=Colour("black"))
 
+            self.price_info = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 10), text="-")
+            self.price_info.place(x=self.front_resolution[0] * 11 / 16, y=self.front_resolution[1] * 1 / self.rows, width=self.front_resolution[0] * 3 / 16,
+                                  height=(self.front_resolution[1] / self.rows) * 8 / 10)
+
             self.oms.append(self.om)
             self.vars.append(self.var)
+            self.price_infos.append(self.price_info)
 
             self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Additional Information:")
             self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] * 2 / self.rows, width=self.front_resolution[0] * 3 / 4,
                            height=self.front_resolution[1] / self.rows)
 
             self.ent = Entry(self.front, bg=Colour("light_black"), fg=Colour("white"))
-            self.ent.place(x=self.front_resolution[0] * 1 / 4, y=self.front_resolution[1] * 3 / self.rows, width=self.front_resolution[0] * 1 / 2,
+            self.ent.place(x=self.front_resolution[0] * 3 / 16, y=self.front_resolution[1] * 3 / self.rows, width=self.front_resolution[0] * 4 / 8,
                            height=(self.front_resolution[1] / self.rows) * 8 / 10)
 
-            self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
-            self.info.place(x=0, y=self.front_resolution[1] * 4 / self.rows, width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
+            self.price_info = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 10), text="-")
+            self.price_info.place(x=self.front_resolution[0] * 11 / 16, y=self.front_resolution[1] * 3 / self.rows, width=self.front_resolution[0] * 3 / 16,
+                                  height=(self.front_resolution[1] / self.rows) * 8 / 10)
 
+            self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
+            self.info.place(x=self.front_resolution[0] * 0, y=self.front_resolution[1] * 5 / self.rows, width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
+
+            self.sum = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 12), text="Total: £ 0.00")
+            self.sum.place(x=self.front_resolution[0] * 11 / 16, y=self.front_resolution[1] * 4 / self.rows, width=self.front_resolution[0] * 3 / 16,
+                           height=self.front_resolution[1] / self.rows)
+
+            # Ribbon
             self.ribbon = Frame(self.back, bg=Colour("light_black"))
             self.ribbon_resolution = (self.width, self.height * 1.5 / 12)
             self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
@@ -154,26 +199,41 @@ class Order_Add(object):
                 self.var = StringVar(self.front)
                 self.var.set("")
 
-                self.om = OptionMenu(self.front, self.var, *self.visible_keys)
-                self.om.place(x=self.front_resolution[0] * 1 / 4, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 0.5), width=self.front_resolution[0] * 1 / 2,
+                self.om = OptionMenu(self.front, self.var, *self.visible_keys, command=lambda lookup: self.om_changed(lookup))
+                self.om.place(x=self.front_resolution[0] * 3 / 16, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 0.5), width=self.front_resolution[0] * 4 / 8,
                               height=(self.front_resolution[1] / self.rows) * 8 / 10)
                 self.om.config(bg=Colour("light_black"), fg=Colour("white"), font=(Font("default"), 14), border=0)
                 self.om["menu"].config(bg=Colour("light_grey"), fg=Colour("black"))
 
+                self.price_info = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="-")
+                self.price_info.place(x=self.front_resolution[0] * 11 / 16, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 0.5), width=self.front_resolution[0] * 3 / 16,
+                                      height=(self.front_resolution[1] / self.rows) * 8 / 10)
+
                 self.oms.append(self.om)
                 self.vars.append(self.var)
+                self.price_infos.append(self.price_info)
 
             self.lab = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="Additional Information:")
             self.lab.place(x=self.front_resolution[0] * 1 / 8, y=self.front_resolution[1] / self.rows * 2 * (self.i + 1), width=self.front_resolution[0] * 3 / 4,
                            height=self.front_resolution[1] / self.rows)
 
             self.ent = Entry(self.front, bg=Colour("light_black"), fg=Colour("white"))
-            self.ent.place(x=self.front_resolution[0] * 1 / 4, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 1.5), width=self.front_resolution[0] * 1 / 2,
+            self.ent.place(x=self.front_resolution[0] * 3 / 16, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 1.5), width=self.front_resolution[0] * 4 / 8,
                            height=(self.front_resolution[1] / self.rows) * 8 / 10)
 
-            self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
-            self.info.place(x=0, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 2.5), width=self.front_resolution[0], height=self.front_resolution[1] / self.rows)
+            self.price_info = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 14), text="-")
+            self.price_info.place(x=self.front_resolution[0] * 11 / 16, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 1.5), width=self.front_resolution[0] * 3 / 16,
+                                  height=(self.front_resolution[1] / self.rows) * 8 / 10)
 
+            self.info = Label(self.front, fg=Colour("red"), bg=Colour("grey"), font=(Font("default"), 12), text="")
+            self.info.place(x=self.front_resolution[0] * 0, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 2.5), width=self.front_resolution[0],
+                            height=self.front_resolution[1] / self.rows)
+
+            self.sum = Label(self.front, fg=Colour("white"), bg=Colour("grey"), font=(Font("default"), 12), text="Total: £ 0.00")
+            self.sum.place(x=self.front_resolution[0] * 11 / 16, y=(self.front_resolution[1] * (2 / self.rows)) * (self.i + 2), width=self.front_resolution[0] * 3 / 16,
+                           height=self.front_resolution[1] / self.rows)
+
+            # Ribbon
             self.ribbon = Frame(self.back, bg=Colour("light_black"))
             self.ribbon_resolution = (self.width, self.height / 12)
             self.ribbon.place(x=self.resolution[0] / 2, y=self.resolution[1], anchor="s", width=self.ribbon_resolution[0], height=self.ribbon_resolution[1])
