@@ -1,10 +1,11 @@
 ## Information
 
 Project developed as part of my coursework for College.<br>
-This project is fully crated in Python with the general features required for basic flawless functionality - however, I wouldn't say it is production tested.<br>
+This project is fully crated in Python with the general features required for basic flawless functionality - however, I wouldn't say it's production tested.<br>
 
-This project is discontinued and will no longer receive any updates, but will be getting bug fixes reported under the <a href="https://github.com/Supermarcel10/Restaurant-Till-System/issues">Issues</a> tab. <br>
-Project may contain bugs, use at your own discression!
+> [!WARNING]
+> This project is discontinued and will no longer receive any updates, but will be getting bug fixes reported under the <a href="https://github.com/Supermarcel10/Restaurant-Till-System/issues">Issues</a> tab. <br>
+> Project may contain bugs, use at your own discression!
 
 ## Installation
 
